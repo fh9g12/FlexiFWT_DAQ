@@ -22,6 +22,8 @@ d.cfg.runCount = 1;
 d.cfg.genGust = 0;
 d.cfg.RunType = '';
 d.cfg.RunNumber = 0;
+d.cfg.datetime = '';
+d.cfg.ZeroRun = Nan;
 
 % gust
 d.gust.amplitudeDeg = 0.0;

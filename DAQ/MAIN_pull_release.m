@@ -4,19 +4,17 @@ addpath('./gust_vane_7x5'); % Add Gust Vane Code Library
 % Created: R.C.M. Cheung
 % Contact: r.c.m.cheung@bristol.ac.uk
 % Date: 22 JUN 2020
-%% Save data?
-swSave = 1;
-base_data_dir = '..\data\';
-%% Subcase
+
+
+%% Required Input Data
+base_data_dir = '..\data\'; % folder to store data in
 subCase = 4; % datum = 1, step-Release = 2, steady-Release = 3, final datum = 4;
-%% Test Set
 massCase = 2; % Empty => 1; 1/4 => 2; Half => 3; 3/4 => 4; Full => 5, Qtr_inner =>6
 testAoA = 10; % deg
-dynamicPressure = 0.0;
 hingeLocked = 0; % (0/1)
 rho = 1.225;
-testVelocity = sqrt(dynamicPressure*2/rho); % m/s
 testDuration = 10.0; % sec
+zeroRunNum = NaN;
 %% Init meta data container
 d = initData();
 %% Select Subcases
@@ -26,6 +24,7 @@ d = SetRunTypeMetaData(d,subCase,testDuration);
 d.cfg = setMeta(d.cfg,'aoa',testAoA);
 % hinge configuration
 d.cfg = setMeta(d.cfg,'locked',hingeLocked);
+d.cfg = setMeta(d.cfg,'ZeroRun',zeroRunNum);
 % mass case
 [d,testType] = massDistro(d,massCase);
 % additional test description
@@ -54,6 +53,8 @@ while(runLoop<1)
         fprintf('\nPause for Next Measurement... \n\n');
         pause(d.cfg.measurementPauseDuration); % Pause between cases
     end
+    %% set the start time
+    d.cfg.datetime = datetime();
     
     %% Run Test
     runTest(s,d);
@@ -72,8 +73,7 @@ while(runLoop<1)
         reportEncoder(d);
         prompt = 'Save data? Choose (0 or 1)\n';
         runLoop = input(prompt);
-        if(runLoop)
-            disp('Up Run Number')         
+        if(runLoop) 
             prompt = 'Wind Tunnel Dynamic Pressure (Pa)?\n';
             dynamicPressure = input(prompt);
             d.cfg = setMeta(d.cfg,'dynamicPressure',dynamicPressure);
