@@ -1,0 +1,28 @@
+function [fSelected,dSelected,plotHandle] = runERACorrel(yi,samplingRate,fmax,alpha,nCorrel,CrudeERA)
+%% ERA using correlated input
+% Created by : R Cheung
+% Contact: r.c.m.cheung@bristol.ac.uk
+% Date: Oct 2019
+%
+% Input : each column of yi is an input data channel
+%% prep
+dt = 1/samplingRate;
+%% filter signal
+[y,~] = filterSignal(yi,dt,fmax);
+%% FFT
+N = size(y,1);
+N = 2^nextpow2(N);
+df = samplingRate/N;
+[~,ys] = genfft(samplingRate,y,N);
+%% prep ERA-DC
+[y,~] = genCorrelSignal(y,dt,nCorrel);
+[H0,H1] = genHankelMat(y,alpha);
+[P,D,Q] = svd(H0,'econ'); % SVD of H0 matrix  (using the "skinny" version)
+plotSVD(D); % plot SVD
+
+if ~exist('CrudeERA','var')
+    [fSelected,dSelected] = solveERA(H1,P,D,Q,dt,df,ys,fmax);
+else
+    [fSelected,dSelected,plotHandle] = solveCrudeERA(H1,P,D,Q,dt,df,ys,fmax,3,10,0);
+end
+end
