@@ -32,3 +32,11 @@ octave-workspace
 
 # Dont want data files
 *.mat
+
+# Dont want pictures
+*.jpg
+*.jpeg
+*.png
+
+# Deal With Mac OS files
+*.DS_Store
