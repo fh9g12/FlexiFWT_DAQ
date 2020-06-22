@@ -53,9 +53,31 @@ for i = 1:length(localDir)
         matFiles(i).Comment = '';
         matFiles(i).Job = '';
         matFiles(i).Datetime = d.cfg.datetime;
-        matFiles(i).FileLocation = [localDir(i).folder,'/',localDir(i).name];
+        
+        %% get folder and file name
+        folders = strsplit(localDir(i).folder,'/');
+        len = length(folders);
+        j=1;
+        while j<len
+          if strcmp(folders(j),'data')
+              break
+          else
+              j=j+1;
+          end
+        end
+
+        %remove first two paths C:\LocalData
+        folders(1:j)=[];
+
+        % add to the MetaData 
+        matFiles(i).Filename = localDir(i).name;
+        matFiles(i).Folder = [strjoin(folders,'/'),'/'];  
     end
 end
+
+MetaData = matFiles;
+save('MetaData.mat','MetaData')
+
 
 
 function parsave(fname, d)
