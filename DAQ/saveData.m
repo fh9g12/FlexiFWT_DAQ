@@ -4,9 +4,6 @@ function [] = saveData(d,save_sw)
 % Contact: r.c.m.cheung@bristol.ac.uk
 % Date: 11 NOV 2019
 
-
-
-
 if(save_sw)
     %get the next run number
     d.cfg.RunNumber = GetNextRunNumber();    

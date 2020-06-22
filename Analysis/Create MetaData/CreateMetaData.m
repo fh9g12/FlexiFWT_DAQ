@@ -26,6 +26,10 @@ for i = 1:length(localDir)
             % no run Number field so create one
             d.cfg.ZeroRun = NaN;          
         end
+        if ~isfield(d.cfg,'Job')
+            % no run Number field so create one
+            d.cfg.Job = '';          
+        end
 
         if ~isfield(d.cfg,'datetime')
             % no run Number field so create one

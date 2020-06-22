@@ -23,7 +23,8 @@ d.cfg.genGust = 0;
 d.cfg.RunType = '';
 d.cfg.RunNumber = 0;
 d.cfg.datetime = '';
-d.cfg.ZeroRun = Nan;
+d.cfg.ZeroRun = NaN;
+d.cfg.Job = '';
 
 % gust
 d.gust.amplitudeDeg = 0.0;

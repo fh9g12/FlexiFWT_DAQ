@@ -15,6 +15,11 @@ hingeLocked = 0; % (0/1)
 rho = 1.225;
 testDuration = 10.0; % sec
 zeroRunNum = NaN;
+jobName = 'StepResponse';
+
+
+
+
 %% Init meta data container
 d = initData();
 %% Select Subcases
@@ -25,6 +30,7 @@ d.cfg = setMeta(d.cfg,'aoa',testAoA);
 % hinge configuration
 d.cfg = setMeta(d.cfg,'locked',hingeLocked);
 d.cfg = setMeta(d.cfg,'ZeroRun',zeroRunNum);
+d.cfg = setMeta(d.cfg,'Job',jobName);
 % mass case
 [d,testType] = massDistro(d,massCase);
 % additional test description
