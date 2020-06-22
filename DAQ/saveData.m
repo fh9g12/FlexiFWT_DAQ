@@ -4,40 +4,24 @@ function [] = saveData(d,save_sw)
 % Contact: r.c.m.cheung@bristol.ac.uk
 % Date: 11 NOV 2019
 
+
+
+
 if(save_sw)
+    %get the next run number
+    d.cfg.RunNumber = GetNextRunNumber();    
     % create filename string
-    if(d.gust.oneMinusCosine)
-        gName = 'Gust';
-    elseif(d.gust.sine)
-        gName = 'conGust';
-    elseif(d.gust.analogue)
-        gName = 'aGust';
-    elseif(d.gust.random)
-        gName = 'rGust';
-    else
-        gName = '';
-    end
-    if(d.tab.sine)
-        tName = 'conTab';
-    elseif(d.tab.chirp)
-        tName = 'chirpTab';
-    elseif(d.tab.analogue)
-        tName = 'Tab';
-    else
-        tName = '';
-    end
+    gName = d.cfg.RunType;
     fName = d.cfg.testType;
+    
     if(~isempty(gName))
         fName = [fName,'_',gName];
-    end
-    if(~isempty(tName))
-        fName = [fName,'_',tName];
     end
     if(d.cfg.locked)
         fName = [fName,'_locked'];
     end
+    
     if(d.cfg.datum)
-        fName = [fName,'_datum'];
         gustString = '';
         tabString = ['_t',fileNumStr(d.tab.trimDeg)];
     else
@@ -69,9 +53,7 @@ if(save_sw)
     if(strcmp(fName(1),'_'))
         fName = fName(2:end);
     end
-    if(d.cfg.runCount>1)
-         fName = [fName,'_Run',num2str(d.cfg.runCount)];
-    end
+    fName = [fName,'_Run',num2str(d.cfg.runNumber)];
     fName = [fName,'.mat'];
         
     % save data

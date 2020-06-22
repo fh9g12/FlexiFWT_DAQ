@@ -21,5 +21,9 @@ switch(caseID)
         d.inertia.position_6 = setMeta(d.inertia.position_6,'mass',87.7e-3);
         d.inertia.position_8 = setMeta(d.inertia.position_8,'mass',87.8e-3);
         d.inertia.position_10 = setMeta(d.inertia.position_10,'mass',87.6e-3);
+    case(6) % 1/4 mass case inner
+        testType = 'mQtr_inner';
+        d.inertia.position_0 = setMeta(d.inertia.position_0,'mass',87.6e-3);
+
 end
 end

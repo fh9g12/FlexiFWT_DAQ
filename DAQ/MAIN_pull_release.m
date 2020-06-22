@@ -6,11 +6,11 @@ addpath('./gust_vane_7x5'); % Add Gust Vane Code Library
 % Date: 22 JUN 2020
 %% Save data?
 swSave = 1;
-dataDir = '..\data\22JUN2020\AoA10Qtr10\'; % output directory
+base_data_dir = '..\data\';
 %% Subcase
-subCase = 4; % datum = 1, steady-state = 2; final datum = 4;
+subCase = 4; % datum = 1, step-Release = 2, steady-Release = 3, final datum = 4;
 %% Test Set
-massCase = 2; % Empty => 1; 1/4 => 2; Half => 3; 3/4 => 4; Full => 5
+massCase = 2; % Empty => 1; 1/4 => 2; Half => 3; 3/4 => 4; Full => 5, Qtr_inner =>6
 testAoA = 10; % deg
 dynamicPressure = 0.0;
 hingeLocked = 0; % (0/1)
@@ -20,35 +20,8 @@ testDuration = 10.0; % sec
 %% Init meta data container
 d = initData();
 %% Select Subcases
-%d.cfg = setMeta(d.cfg,'RunType','StepRelease');
-d.cfg = setMeta(d.cfg,'RunType','SteadyRelease');
-%d.cfg = setMeta(d.cfg,'RunType','Datum');
+d = SetRunTypeMetaData(d,subCase,testDuration);
 
-
-switch(subCase)
-    case(1) % datum
-        d.cfg = setMeta(d.cfg,'datum',1);
-        d.cfg = setMeta(d.cfg,'runCount',1);
-        d.cfg = setMeta(d.cfg,'velocity',0.0);
-        d.gust = setMeta(d.gust,'frequency',0.0,'amplitudeDeg',0.0);
-        loopArray = 1;
-        d.cfg = setMeta(d.cfg,'postGustPauseDuration',testDuration+1.0);
-    case(2) % steady-state
-        d.cfg = setMeta(d.cfg,'datum',0);
-        d.cfg = setMeta(d.cfg,'runCount',1);
-        d.cfg = setMeta(d.cfg,'dynamicPressure',dynamicPressure);
-        d.cfg = setMeta(d.cfg,'velocity',testVelocity);
-        d.gust = setMeta(d.gust,'frequency',0.0,'amplitudeDeg',0.0);
-        d.cfg = setMeta(d.cfg,'postGustPauseDuration',testDuration+1.0);
-        loopArray = 1;
-    case(4) % final datum
-        d.cfg = setMeta(d.cfg,'datum',1);
-        d.cfg = setMeta(d.cfg,'runCount',2);
-        d.cfg = setMeta(d.cfg,'velocity',0.0);
-        d.gust = setMeta(d.gust,'frequency',0.0,'amplitudeDeg',0.0);
-        loopArray = 2;
-        d.cfg = setMeta(d.cfg,'postGustPauseDuration',testDuration+1.0);
-end
 % WT configuration
 d.cfg = setMeta(d.cfg,'aoa',testAoA);
 % hinge configuration
@@ -63,12 +36,14 @@ d.cfg = setMeta(d.cfg,'measurementPauseDuration',5.0, ...
 % DAQ rate
 d.daq = setMeta(d.daq,'rate',1700.0); % nearest to 1706.667 Hz(calculated from 1/5.859375e-04)
 % Files
-d.cfg = setMeta(d.cfg,'dataDirectory',dataDir);
+d.cfg = setMeta(d.cfg,'dataDirectory',[base_data_dir,d.cfg.testType,'\AoA',fileNumStr(testAoA),'\']);
 %% Init Test
 [s,d,lh,lh2] = initTest(d);
 swNewTest = 1;
-runLoop = 0;
-count = 1;
+
+prompt = 'Start Testing? Choose (0 or 1)\n';
+yN = input(prompt);
+runLoop = not(yN);
 while(runLoop<1)
     %% Queue output data
     if(swNewTest)
@@ -86,19 +61,19 @@ while(runLoop<1)
     d = loadData(s,d);
     %% Plots
     genPlots(d);
-    if(subCase~=2)
+    % for datum runs end after one measurement
+    if(subCase==1 || subCase ==4)
         %% Save data
         saveData(d,swSave);
         runLoop = 1;
+    % for other run types continue the test
     else
         %% Prompts
         reportEncoder(d);
         prompt = 'Save data? Choose (0 or 1)\n';
         runLoop = input(prompt);
         if(runLoop)
-            disp('Up Run Number')
-            d.cfg = setMeta(d.cfg,'runCount',count);
-            count = count + 1;            
+            disp('Up Run Number')         
             prompt = 'Wind Tunnel Dynamic Pressure (Pa)?\n';
             dynamicPressure = input(prompt);
             d.cfg = setMeta(d.cfg,'dynamicPressure',dynamicPressure);

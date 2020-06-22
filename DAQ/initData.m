@@ -21,6 +21,7 @@ d.cfg.testType = '';
 d.cfg.runCount = 1;
 d.cfg.genGust = 0;
 d.cfg.RunType = '';
+d.cfg.RunNumber = 0;
 
 % gust
 d.gust.amplitudeDeg = 0.0;
