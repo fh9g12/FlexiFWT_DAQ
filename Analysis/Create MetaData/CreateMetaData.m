@@ -55,7 +55,7 @@ for i = 1:length(localDir)
         matFiles(i).SteadyStateRun = [];
         matFiles(i).FinalZeroRun = [];
         matFiles(i).Comment = '';
-        matFiles(i).Job = '';
+        matFiles(i).Job = d.cfg.Job;
         matFiles(i).Datetime = d.cfg.datetime;
         
         %% get folder and file name
