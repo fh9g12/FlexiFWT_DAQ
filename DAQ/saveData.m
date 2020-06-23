@@ -50,7 +50,7 @@ if(save_sw)
     if(strcmp(fName(1),'_'))
         fName = fName(2:end);
     end
-    fName = [fName,'_Run',num2str(d.cfg.runNumber)];
+    fName = [fName,'_Run',num2str(d.cfg.RunNumber)];
     fName = [fName,'.mat'];
         
     % save data

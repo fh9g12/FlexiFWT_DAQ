@@ -1,5 +1,5 @@
 close all;clc;fclose all;clear all;restoredefaultpath;
-addpath('./gust_vane_7x5'); % Add Gust Vane Code Library
+addpath('.\gust_vane_7x5'); % Add Gust Vane Code Library
 %% Folding Wingtip WTT DAQ Script
 % Created: R.C.M. Cheung
 % Contact: r.c.m.cheung@bristol.ac.uk
@@ -9,16 +9,22 @@ addpath('./gust_vane_7x5'); % Add Gust Vane Code Library
 %% Required Input Data
 base_data_dir = '..\data\'; % folder to store data in
 subCase = 4; % datum = 1, step-Release = 2, steady-Release = 3, final datum = 4;
-massCase = 2; % Empty => 1; 1/4 => 2; Half => 3; 3/4 => 4; Full => 5, Qtr_inner =>6
-testAoA = 10; % deg
+massCase = 1; % Empty => 1; 1/4 => 2; Half => 3; 3/4 => 4; Full => 5, Qtr_inner =>6
+testAoA = -2.5; % deg
 hingeLocked = 0; % (0/1)
 rho = 1.225;
-testDuration = 10.0; % sec
-zeroRunNum = NaN;
+testDuration = 30.0; % sec
+zeroRunNum = 197;
 jobName = 'StepResponse';
 
+% check input
+if ~isnan(zeroRunNum) && subCase == 1
+    error('Datum run must be NaN for a the first zero run')
+end
 
-
+if isnan(zeroRunNum) && subCase ~= 1
+    error('Datum run be set for none first datum runs')
+end
 
 %% Init meta data container
 d = initData();
@@ -36,12 +42,12 @@ d.cfg = setMeta(d.cfg,'Job',jobName);
 % additional test description
 d.cfg = setMeta(d.cfg,'testType',testType);
 % timing
-d.cfg = setMeta(d.cfg,'measurementPauseDuration',5.0, ...
+d.cfg = setMeta(d.cfg,'measurementPauseDuration',3.0, ...
     'preGustPauseDuration',1.0);
 % DAQ rate
 d.daq = setMeta(d.daq,'rate',1700.0); % nearest to 1706.667 Hz(calculated from 1/5.859375e-04)
 % Files
-d.cfg = setMeta(d.cfg,'dataDirectory',[base_data_dir,d.cfg.testType,'\AoA',fileNumStr(testAoA),'\']);
+d.cfg = setMeta(d.cfg,'dataDirectory',[base_data_dir,date(),'\',d.cfg.testType,'\AoA',fileNumStr(testAoA),'\']);
 %% Init Test
 [s,d,lh,lh2] = initTest(d);
 swNewTest = 1;
@@ -71,7 +77,7 @@ while(runLoop<1)
     % for datum runs end after one measurement
     if(subCase==1 || subCase ==4)
         %% Save data
-        saveData(d,swSave);
+        saveData(d,true);
         runLoop = 1;
     % for other run types continue the test
     else
@@ -87,7 +93,7 @@ while(runLoop<1)
             testVelocity = sqrt(dynamicPressure*2/rho); % m/s
             d.cfg = setMeta(d.cfg,'velocity',testVelocity);
             %% Save data
-            saveData(d,swSave);
+            saveData(d,true);
         end
         prompt = 'Continue Testing? Choose (0 or 1)\n';
         yN = input(prompt);
