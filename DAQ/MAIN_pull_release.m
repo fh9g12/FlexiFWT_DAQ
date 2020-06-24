@@ -8,14 +8,14 @@ addpath('.\gust_vane_7x5'); % Add Gust Vane Code Library
 
 %% Required Input Data
 base_data_dir = '..\data\'; % folder to store data in
-subCase = 4; % datum = 1, step-Release = 2, steady-Release = 3, final datum = 4;
+subCase = 2; % datum = 1, step-Release = 2, steady-Release = 3, final datum = 4;
 massCase = 1; % Empty => 1; 1/4 => 2; Half => 3; 3/4 => 4; Full => 5, Qtr_inner =>6
-testAoA = -2.5; % deg
+testAoA = 10; % deg
 hingeLocked = 0; % (0/1)
 rho = 1.225;
-testDuration = 30.0; % sec
-zeroRunNum = 197;
-jobName = 'StepResponse';
+testDuration = 4.0; % sec
+zeroRunNum = 328;
+jobName = 'strainTipDisp';
 
 % check input
 if ~isnan(zeroRunNum) && subCase == 1
@@ -42,7 +42,7 @@ d.cfg = setMeta(d.cfg,'Job',jobName);
 % additional test description
 d.cfg = setMeta(d.cfg,'testType',testType);
 % timing
-d.cfg = setMeta(d.cfg,'measurementPauseDuration',3.0, ...
+d.cfg = setMeta(d.cfg,'measurementPauseDuration',1.0, ...
     'preGustPauseDuration',1.0);
 % DAQ rate
 d.daq = setMeta(d.daq,'rate',1700.0); % nearest to 1706.667 Hz(calculated from 1/5.859375e-04)
@@ -76,6 +76,10 @@ while(runLoop<1)
     genPlots(d);
     % for datum runs end after one measurement
     if(subCase==1 || subCase ==4)
+        % enter comments
+        prompt = 'Enter a Comment\n';
+        d.cfg = setMeta(d.cfg,'Comment',input(prompt,'s'));
+        
         %% Save data
         saveData(d,true);
         runLoop = 1;
@@ -92,6 +96,11 @@ while(runLoop<1)
             rho = 1.225;
             testVelocity = sqrt(dynamicPressure*2/rho); % m/s
             d.cfg = setMeta(d.cfg,'velocity',testVelocity);
+            
+            %% enter comments
+            prompt = 'Enter a Comment\n';
+            d.cfg = setMeta(d.cfg,'Comment',input(prompt,'s'));
+            
             %% Save data
             saveData(d,true);
         end

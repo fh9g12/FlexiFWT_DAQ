@@ -25,6 +25,7 @@ d.cfg.RunNumber = 0;
 d.cfg.datetime = '';
 d.cfg.ZeroRun = NaN;
 d.cfg.Job = '';
+d.cfg.Comment = '';
 
 % gust
 d.gust.amplitudeDeg = 0.0;
