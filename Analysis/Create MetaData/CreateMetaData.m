@@ -4,7 +4,7 @@ matFiles = struct([]);
 
 localDir = dir('../../data/**/*.mat');
 
-for i = 1:length(localDir)
+parfor i = 1:length(localDir)
     %clearvars -except localDir matFiles RunNumber i
     d = load([localDir(i).folder,'/',localDir(i).name]);
     while isfield(d,'d')
@@ -24,11 +24,15 @@ for i = 1:length(localDir)
         end
         if ~isfield(d.cfg,'ZeroRun')
             % no run Number field so create one
-            d.cfg.ZeroRun = NaN;          
+            d.cfg.ZeroRun = -1;          
         end
         if ~isfield(d.cfg,'Job')
             % no run Number field so create one
             d.cfg.Job = '';          
+        end
+        if ~isfield(d.cfg,'Comment')
+            % no run Number field so create one
+            d.cfg.Comment = '';          
         end
 
         if ~isfield(d.cfg,'datetime')
@@ -51,10 +55,10 @@ for i = 1:length(localDir)
         matFiles(i).AoA = d.cfg.aoa;
         matFiles(i).Velocity = d.cfg.velocity;
         matFiles(i).MassConfig = d.cfg.testType;
-        matFiles(i).ZeroRun = [];
+        matFiles(i).ZeroRun = d.cfg.ZeroRun;
         matFiles(i).SteadyStateRun = [];
         matFiles(i).FinalZeroRun = [];
-        matFiles(i).Comment = '';
+        matFiles(i).Comment = d.cfg.Comment;
         matFiles(i).Job = d.cfg.Job;
         matFiles(i).Datetime = d.cfg.datetime;
         
