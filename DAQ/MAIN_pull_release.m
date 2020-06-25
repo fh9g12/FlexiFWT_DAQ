@@ -8,14 +8,14 @@ addpath('.\gust_vane_7x5'); % Add Gust Vane Code Library
 
 %% Required Input Data
 base_data_dir = '..\data\'; % folder to store data in
-subCase = 2; % datum = 1, step-Release = 2, steady-Release = 3, final datum = 4;
-massCase = 1; % Empty => 1; 1/4 => 2; Half => 3; 3/4 => 4; Full => 5, Qtr_inner =>6
-testAoA = 10; % deg
+subCase = 4; % datum = 1, step-Release = 2, steady-Release = 3, final datum = 4;
+massCase = 6; % Empty => 1; 1/4 => 2; Half => 3; 3/4 => 4; Full => 5, Qtr_inner =>6
+testAoA = -2.5; % deg
 hingeLocked = 0; % (0/1)
 rho = 1.225;
-testDuration = 4.0; % sec
-zeroRunNum = 328;
-jobName = 'strainTipDisp';
+testDuration = 10.0; % sec
+zeroRunNum = 467;  % NaN for first datum and the run number of first datum for the rest
+jobName = 'StepResponse';
 
 % check input
 if ~isnan(zeroRunNum) && subCase == 1
@@ -42,7 +42,7 @@ d.cfg = setMeta(d.cfg,'Job',jobName);
 % additional test description
 d.cfg = setMeta(d.cfg,'testType',testType);
 % timing
-d.cfg = setMeta(d.cfg,'measurementPauseDuration',1.0, ...
+d.cfg = setMeta(d.cfg,'measurementPauseDuration',3.0, ...
     'preGustPauseDuration',1.0);
 % DAQ rate
 d.daq = setMeta(d.daq,'rate',1700.0); % nearest to 1706.667 Hz(calculated from 1/5.859375e-04)
@@ -51,6 +51,20 @@ d.cfg = setMeta(d.cfg,'dataDirectory',[base_data_dir,date(),'\',d.cfg.testType,'
 %% Init Test
 [s,d,lh,lh2] = initTest(d);
 swNewTest = 1;
+
+% Reset Load Cells - use seriallist() to find correct ports
+if subCase == 1
+    instrreset()
+    ports = [5,6];
+    for j = 1:length(ports)
+        sPort = serial(sprintf('COM%d',ports(j)),'BAUD',57600);
+        fopen(sPort);
+        fprintf('Reseting COM%d:\n',ports(j))
+        fprintf(sPort,'S');
+        fprintf('Recived: %s\n',convertCharsToStrings(char(fread(sPort,7))))
+        fclose(sPort);     
+    end
+end
 
 prompt = 'Start Testing? Choose (0 or 1)\n';
 yN = input(prompt);
