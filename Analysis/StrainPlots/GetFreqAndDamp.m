@@ -48,6 +48,6 @@ delta = time(2:end)-time(1:end-1);
 frequency = 1/mean(delta);
 
 sigmas = log(amp(2:end))./time(2:end);
-damping = mean(sigmas(sigmas~=0));
+damping = mean(sigmas(sigmas~=0))./frequency;
 end
 
