@@ -118,6 +118,22 @@ while(runLoop==1)
     else
         %% Prompts
         if(runLoop)
+            % Get Type of Test (step or steady)
+            testType_num = 2;
+            while testType_num>1
+                testType_num = testscript_input('Test Type? (0-Step Input 1-Steady):\n');
+            end                
+            switch testType_num
+                case(0)
+                    d.cfg = setMeta(d.cfg,'testType','StepInput');
+                case(1)
+                    d.cfg = setMeta(d.cfg,'testType','Steady');
+            end
+            
+            % Was there an LCO
+            runLoop = testscript_input('LCO? Choose (0 or 1):\n');
+            d.cfg = setMeta(d.cfg,'LCO',runLoop);
+            
             % Get Dynamic Pressure
             dynamicPressure = testscript_input('Wind Tunnel Dynamic Pressure (Pa)?\n');                    
             d.cfg = setMeta(d.cfg,'dynamicPressure',dynamicPressure);
@@ -126,7 +142,7 @@ while(runLoop==1)
             d.cfg = setMeta(d.cfg,'velocity',testVelocity); 
                         
             %% enter comments
-            prompt = 'Enter a Comment\n';
+            prompt = 'Enter a Comment:\n';
             d.cfg = setMeta(d.cfg,'Comment',input(prompt,'s'));
             
             %% Save data
