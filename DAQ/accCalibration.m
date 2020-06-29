@@ -21,7 +21,6 @@ function [C] = accCalibration()
 % [x=0.11c, y=1.337]z C=105.8 => wing's -ve x
 % M352C65 LW253480
 % C=99.9
-% *** NOT FITTED ***
 
 % tunnel mount accelerometers - channels 8-9
 % SN26256
@@ -43,7 +42,7 @@ function [C] = accCalibration()
 C = [-98.6, ...
     -99.6,97.6,-98.2, ...
     105.3,-102.7,-105.8, ...
-    -98.5,-101.1, ...
+    99.9,-98.5,-101.1, ...
     101.1,-98.7];
 C = C*1e-3/100e-3; % due to assumed sensitivity of 100mv/g applied at the time of DAQ
 end

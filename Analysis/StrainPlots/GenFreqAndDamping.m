@@ -13,8 +13,8 @@ load([localDir,'../MetaData.mat']);     % the Metadata filepath
 indicies = true([1,length(MetaData)]);
 indicies = indicies & string({MetaData.Job}) == 'StepResponse';
 indicies = indicies & string({MetaData.RunType}) == 'StepRelease';
-indicies = indicies & string({MetaData.MassConfig}) == 'mQtr';
-%indicies = indicies & string({MetaData.MassConfig}) == 'mEmpty';
+%indicies = indicies & string({MetaData.MassConfig}) == 'mQtr';
+indicies = indicies & string({MetaData.MassConfig}) == 'mEmpty';
 indicies = indicies & ~[MetaData.Locked];
 
 RunData = MetaData(indicies);
@@ -27,8 +27,7 @@ subplot(2,1,2)
 hold off
 
 unique_aoa = unique([RunData.AoA]);
-
-for i = 1:length(unique_aoa)
+    for i = 1:length(unique_aoa)
     aoaData = RunData([RunData.AoA]==unique_aoa(i));
     f=zeros(1,length(aoaData));
     d=zeros(1,length(aoaData));

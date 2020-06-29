@@ -8,14 +8,14 @@ addpath('.\gust_vane_7x5'); % Add Gust Vane Code Library
 
 %% Required Input Data
 base_data_dir = '..\data\'; % folder to store data in
-subCase = 4; % datum = 1, step-Release = 2, steady-Release = 3, final datum = 4;
-massCase = 6; % Empty => 1; 1/4 => 2; Half => 3; 3/4 => 4; Full => 5, Qtr_inner =>6
+subCase = 2; % datum = 1, step-Release = 2, steady-Release = 3, final datum = 4;
+massCase = 5; % Empty => 1; 1/4 => 2; Half => 3; 3/4 => 4; Full => 5, Qtr_inner =>6
 testAoA = -2.5; % deg
 hingeLocked = 0; % (0/1)
 rho = 1.225;
 testDuration = 10.0; % sec
-zeroRunNum = 467;  % NaN for first datum and the run number of first datum for the rest
-jobName = 'StepResponse';
+zeroRunNum = 503;  % NaN for first datum and the run number of first datum for the rest
+jobName = 'StepResponseTab';
 
 % check input
 if ~isnan(zeroRunNum) && subCase == 1
@@ -55,7 +55,7 @@ swNewTest = 1;
 % Reset Load Cells - use seriallist() to find correct ports
 if subCase == 1
     instrreset()
-    ports = [5,6];
+    ports = [7,8];
     for j = 1:length(ports)
         sPort = serial(sprintf('COM%d',ports(j)),'BAUD',57600);
         fopen(sPort);

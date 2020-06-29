@@ -15,7 +15,7 @@ s = daq.createSession('ni');
 chNameList = {'z_wg', ...
     'y_hg','z_hg','x_hg', ...
     'y_wt','z_wt','x_wt','z_wtt'};
-chList = 0:6;
+chList = 0:7;
 % chNameList{8} = {'z_wtt'};
 % chList(8) = 7;
 for ii = 1:length(chList)
@@ -72,11 +72,11 @@ ch.Range = [-10,10]; % volatge range
 ch.Name = 'sync';
 
 
-% % servo signal @ ch21
-% ch = addAnalogInputChannel(s,'PXI1Slot7','ai20','Voltage');
-% ch.TerminalConfig = 'Differential';
-% ch.Range = [-10,10]; % volatge range
-% ch.Name = 'servo';
+% servo signal @ ch21
+ch = addAnalogInputChannel(s,'PXI1Slot7','ai20','Voltage');
+ch.TerminalConfig = 'Differential';
+ch.Range = [-10,10]; % volatge range
+ch.Name = 'servo';
 
 
 % gust signal @ ch22

@@ -63,7 +63,7 @@ parfor i = 1:length(localDir)
         matFiles(i).Datetime = d.cfg.datetime;
         
         %% get folder and file name
-        folders = strsplit(localDir(i).folder,'/');
+        folders = strsplit(localDir(i).folder,'\');
         len = length(folders);
         j=1;
         while j<len

@@ -24,6 +24,7 @@ switch(caseID)
     case(6) % 1/4 mass case inner
         testType = 'mQtr_inner';
         d.inertia.position_0 = setMeta(d.inertia.position_0,'mass',87.6e-3);
-
+    case(7) % tab wingtip
+        testType = 'servo_fwt';
 end
 end
