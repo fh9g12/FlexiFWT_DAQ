@@ -49,7 +49,7 @@ d.daq = setMeta(d.daq,'rate',1700.0); % nearest to 1706.667 Hz(calculated from 1
 % Files
 d.cfg = setMeta(d.cfg,'dataDirectory',[base_data_dir,date(),'\',d.cfg.testType,'\AoA',fileNumStr(testAoA),'\']);
 
-%quick hack
+%Set Tab Meta Data 
 d.tab = setMeta(d.tab,'sine',1);
 d.tab = setMeta(d.tab,'frequency',0);
 d.tab = setMeta(d.tab,'amplitudeDeg',0);
@@ -74,21 +74,13 @@ if subCase == 1
     end
 end
 
-prompt = 'Start Testing? Choose (0 or 1)\n';
-runLoop = [];
-while(isempty(runLoop))
-    runLoop = str2num(input(prompt,'s'));  
-end    
+runLoop = testscript_input('Start Testing? Choose (0 or 1)\n');
 while(runLoop==1)
     
     %% Set the tab angle
-    prompt = 'Tab Angle?\n';
-    tabAngle = [];
-    while(isempty(tabAngle))
-        tabAngle = str2num(input(prompt,'s'));  
-    end
-    tabAngle = max([-25,tabAngle]);
-    tabAngle = min([25,tabAngle]);
+    prompt = sprintf('Tab Angle? (Current value: %d)\n',d.tab.trimDeg);
+    tabAngle = testscript_input(prompt);
+    tabAngle = min(max(-25,tabAngle),25);
     d.tab = setMeta(d.tab,'trimDeg',tabAngle);    
     
     %% Queue output data
@@ -111,12 +103,7 @@ while(runLoop==1)
     genPlots(d);
     % for datum runs end after one measurement
     reportEncoder(d);
-    prompt = 'Save data? Choose (0 or 1)\n';
-    runLoop = [];
-    while(isempty(runLoop))
-        runLoop = str2num(input(prompt,'s'));  
-    end  
-    
+    runLoop = testscript_input('Save data? Choose (0 or 1)\n');    
     if(subCase==1 || subCase ==4)
         if runLoop
             % enter comments
@@ -132,17 +119,12 @@ while(runLoop==1)
         %% Prompts
         if(runLoop)
             % Get Dynamic Pressure
-            prompt = 'Wind Tunnel Dynamic Pressure (Pa)?\n';
-            dynamicPressure = [];
-            while(isempty(dynamicPressure))
-                dynamicPressure = str2num(input(prompt,'s'));  
-            end                     
+            dynamicPressure = testscript_input('Wind Tunnel Dynamic Pressure (Pa)?\n');                    
             d.cfg = setMeta(d.cfg,'dynamicPressure',dynamicPressure);
             rho = 1.225;
             testVelocity = sqrt(dynamicPressure*2/rho); % m/s
             d.cfg = setMeta(d.cfg,'velocity',testVelocity); 
-              
-            
+                        
             %% enter comments
             prompt = 'Enter a Comment\n';
             d.cfg = setMeta(d.cfg,'Comment',input(prompt,'s'));
@@ -151,11 +133,7 @@ while(runLoop==1)
             saveData(d,true);
         end
         prompt = 'Continue Testing? Choose (0 or 1)\n';
-        yN = [];
-        while(isempty(yN))
-            yN = str2num(input(prompt,'s'));  
-        end    
-        runLoop = yN;
+        runLoop = testscript_input('Continue Testing? Choose (0 or 1)\n');
     end
 end
 %% Finish Test
