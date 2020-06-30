@@ -15,24 +15,28 @@ parfor i = 1:length(localDir)
         if isfield(d,'cfg')
         % if here this is a valid .mat file
         if ~isfield(d.cfg,'runNumber')
-            % no run Number field so create one
+            % no runNumber field so create one
             d.cfg.runNumber = i;          
         end
         if ~isfield(d.cfg,'RunType')
-            % no run Number field so create one
+            % no RunType field so create one
             d.cfg.RunType = '';          
         end
         if ~isfield(d.cfg,'ZeroRun')
-            % no run Number field so create one
+            % no Zero Run field so create one
             d.cfg.ZeroRun = -1;          
         end
         if ~isfield(d.cfg,'Job')
-            % no run Number field so create one
+            % no Job field so create one
             d.cfg.Job = '';          
         end
         if ~isfield(d.cfg,'Comment')
-            % no run Number field so create one
+            % no Comment field so create one
             d.cfg.Comment = '';          
+        end
+        if ~isfield(d.cfg,'LCO')
+            % no LCO field so create one
+            d.cfg.LCO = 0;          
         end
 
         if ~isfield(d.cfg,'datetime')
@@ -63,7 +67,7 @@ parfor i = 1:length(localDir)
         matFiles(i).Datetime = d.cfg.datetime;
         
         %% get folder and file name
-        folders = strsplit(localDir(i).folder,'\');
+        folders = strsplit(localDir(i).folder,'/');
         len = length(folders);
         j=1;
         while j<len

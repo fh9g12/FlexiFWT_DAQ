@@ -125,9 +125,9 @@ while(runLoop==1)
             end                
             switch testType_num
                 case(0)
-                    d.cfg = setMeta(d.cfg,'testType','StepInput');
+                    d.cfg = setMeta(d.cfg,'RunType','StepInput');
                 case(1)
-                    d.cfg = setMeta(d.cfg,'testType','Steady');
+                    d.cfg = setMeta(d.cfg,'RunType','Steady');
             end
             
             % Was there an LCO
