@@ -65,6 +65,8 @@ parfor i = 1:length(localDir)
         matFiles(i).Comment = d.cfg.Comment;
         matFiles(i).Job = d.cfg.Job;
         matFiles(i).Datetime = d.cfg.datetime;
+        matFiles(i).TabAngle = d.tab.trimDeg;
+        matFiles(i).LCO = d.cfg.LCO;
         
         %% get folder and file name
         folders = strsplit(localDir(i).folder,'/');
