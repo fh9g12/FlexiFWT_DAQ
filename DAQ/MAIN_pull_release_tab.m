@@ -8,13 +8,13 @@ addpath('.\gust_vane_7x5'); % Add Gust Vane Code Library
 
 %% Required Input Data
 base_data_dir = '..\data\'; % folder to store data in
-subCase = 2; % datum = 1, step-Release = 2, steady-Release = 3, final datum = 4;
+subCase = 4; % datum = 1, step-Release = 2, steady-Release = 3, final datum = 4;
 massCase = 7; % Empty => 1; 1/4 => 2; Half => 3; 3/4 => 4; Full => 5, Qtr_inner =>6
 testAoA = 5.5; % deg
 hingeLocked = 0; % (0/1)
 rho = 1.225;
 testDuration = 10.0; % sec
-zeroRunNum = 663;  % NaN for first datum and the run number of first datum for the rest
+zeroRunNum = 735;  % NaN for first datum and the run number of first datum for the rest
 jobName = 'FlutterBiSection';
 
 % check input
