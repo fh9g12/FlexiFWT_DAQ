@@ -23,6 +23,7 @@ servoCmd(end) = d.tab.trimDeg;
 servoCmd(end:length(d.cfg.sync)) = d.tab.trimDeg;
 servoCmd = servoCmd*(8/45); % convert to voltage, factor: 4096/360/64 => 8/45
 servoCmd = min(max(servoCmd,-10.0),10.0); % clamp voltage between +/- 10V
+%servoCmd(1:round(end/2)) = 0;
 if(d.gust.analogue)
     [gustCmd,~] = genSignalSineContinuous( ...
         d.gust.amplitudeDeg,d.gust.frequency, ...

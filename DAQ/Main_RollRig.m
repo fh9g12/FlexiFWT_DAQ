@@ -9,14 +9,15 @@ addpath('.\gust_vane_7x5'); % Add Gust Vane Code Library
 %% Required Input Data
 base_data_dir = '..\data\'; % folder to store data in
 subCase = 2; % datum = 1, step-Release = 2, steady-Release = 3, final datum = 4;
-massCase = 7; % Empty => 1; 1/4 => 2; Half => 3; 3/4 => 4; Full => 5, Qtr_inner =>6
-testAoA = 7.5; % deg
-FlareAngle = 30; % deg
+ModelCase = 4; % Fixed => 0; Free => 1; Removed => 2 
+testAoA = 0; % deg
 hingeLocked = 0; % (0/1)
 rho = 1.225;
-testDuration = 10; % sec
-zeroRunNum = 1080;  % NaN for first datum and the run number of first datum for the rest
-jobName = '30DegreeHinge';
+testDuration = 30; % sec
+zeroRunNum = 1008;  % NaN for first datum and the run number of first datum for the rest
+jobName = 'RollingRigv1_1';
+
+
 
 % check input
 if ~isnan(zeroRunNum) && subCase == 1
@@ -38,11 +39,21 @@ d.cfg = setMeta(d.cfg,'aoa',testAoA);
 d.cfg = setMeta(d.cfg,'locked',hingeLocked);
 d.cfg = setMeta(d.cfg,'ZeroRun',zeroRunNum);
 d.cfg = setMeta(d.cfg,'Job',jobName);
-d.cfg = setMeta(d.cfg,'FlareAngle',FlareAngle);
-% mass case
-[d,testType] = massDistro(d,massCase);
+
 % additional test description
-d.cfg = setMeta(d.cfg,'testType',testType);
+switch(ModelCase)
+    case(0)
+        d.cfg = setMeta(d.cfg,'testType','RollingRig_Fixed');
+    case(1)
+        d.cfg = setMeta(d.cfg,'testType','RollingRig_Free');
+    case(2)
+        d.cfg = setMeta(d.cfg,'testType','RollingRig_Removed');
+    case(3)
+        d.cfg = setMeta(d.cfg,'testType','RollingRig_LeftFixed');
+    case(4)
+        d.cfg = setMeta(d.cfg,'testType','RollingRig_RightFixed');
+end
+
 % timing
 d.cfg = setMeta(d.cfg,'measurementPauseDuration',3.0, ...
     'preGustPauseDuration',1.0);
@@ -57,33 +68,14 @@ d.tab = setMeta(d.tab,'frequency',0);
 d.tab = setMeta(d.tab,'amplitudeDeg',0);
 d.tab = setMeta(d.tab,'trimDeg',0);
 d.tab = setMeta(d.tab,'duration',1);
+d.cfg = setMeta(d.cfg,'LCO',0);
 
 %% Init Test
 [s,d,lh,lh2] = initTest(d);
 swNewTest = 1;
 
-% Reset Load Cells - use seriallist() to find correct ports
-if subCase == 1
-    instrreset()
-    ports = [7,8];
-    for j = 1:length(ports)
-        sPort = serial(sprintf('COM%d',ports(j)),'BAUD',57600);
-        fopen(sPort);
-        fprintf('Reseting COM%d:\n',ports(j))
-        fprintf(sPort,'S');
-        fprintf('Recived: %s\n',convertCharsToStrings(char(fread(sPort,7))))
-        fclose(sPort);     
-    end
-end
-
 runLoop = testscript_input('Start Testing? Choose (0 or 1)\n');
-while(runLoop==1)
-    
-    %% Set the tab angle
-    prompt = sprintf('Tab Angle? (Current value: %d)\n',d.tab.trimDeg);
-    tabAngle = testscript_input(prompt);
-    tabAngle = min(max(-25,tabAngle),25);
-    d.tab = setMeta(d.tab,'trimDeg',tabAngle);    
+while(runLoop==1) 
     
     %% Queue output data
     if(swNewTest)
@@ -123,18 +115,14 @@ while(runLoop==1)
             % Get Type of Test (step or steady)
             testType_num = 2;
             while testType_num>1
-                testType_num = testscript_input('Test Type? (0-Step Input 1-Steady):\n');
+                testType_num = testscript_input('Test Type? (0-Release 1-Steady):\n');
             end                
             switch testType_num
                 case(0)
-                    d.cfg = setMeta(d.cfg,'RunType','StepInput');
+                    d.cfg = setMeta(d.cfg,'RunType','Release');
                 case(1)
                     d.cfg = setMeta(d.cfg,'RunType','Steady');
             end
-            
-            % Was there an LCO
-            runLoop = testscript_input('LCO? Choose (0 or 1):\n');
-            d.cfg = setMeta(d.cfg,'LCO',runLoop);
             
             % Get Dynamic Pressure
             dynamicPressure = testscript_input('Wind Tunnel Dynamic Pressure (Pa)?\n');                    
