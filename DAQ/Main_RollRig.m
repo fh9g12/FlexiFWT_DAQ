@@ -9,13 +9,13 @@ addpath('.\gust_vane_7x5'); % Add Gust Vane Code Library
 %% Required Input Data
 base_data_dir = '..\data\'; % folder to store data in
 subCase = 2; % datum = 1, step-Release = 2, steady-Release = 3, final datum = 4;
-ModelCase = 4; % Fixed => 0; Free => 1; Removed => 2 
+ModelCase = 3; % Fixed => 0; Free => 1; Removed => 2; Left Fixed => 3; Right Fixed => 4
 testAoA = 0; % deg
 hingeLocked = 0; % (0/1)
 rho = 1.225;
-testDuration = 30; % sec
-zeroRunNum = 1008;  % NaN for first datum and the run number of first datum for the rest
-jobName = 'RollingRigv1_1';
+testDuration = 15; % sec
+zeroRunNum = 1279;  % NaN for first datum and the run number of first datum for the rest
+jobName = 'RollingRigv1_45';
 
 
 
@@ -55,8 +55,8 @@ switch(ModelCase)
 end
 
 % timing
-d.cfg = setMeta(d.cfg,'measurementPauseDuration',3.0, ...
-    'preGustPauseDuration',1.0);
+d.cfg = setMeta(d.cfg,'measurementPauseDuration',0.5, ...
+    'preGustPauseDuration',0);
 % DAQ rate
 d.daq = setMeta(d.daq,'rate',1700.0); % nearest to 1706.667 Hz(calculated from 1/5.859375e-04)
 % Files
@@ -113,17 +113,27 @@ while(runLoop==1)
         %% Prompts
         if(runLoop)
             % Get Type of Test (step or steady)
-            testType_num = 2;
-            while testType_num>1
-                testType_num = testscript_input('Test Type? (0-Release 1-Steady):\n');
+            testType_num = 7;
+            while testType_num>6
+                testType_num = testscript_input('Test Type? (0-Release 1-Steady 2-Release_Inverted 3-Release_GoPro 4-Release_Inverted_GoPro 5-Inverted_GoPro 6-GoPro):\n');
             end                
             switch testType_num
                 case(0)
                     d.cfg = setMeta(d.cfg,'RunType','Release');
                 case(1)
                     d.cfg = setMeta(d.cfg,'RunType','Steady');
+                case(2)
+                    d.cfg = setMeta(d.cfg,'RunType','Release_Inverted');
+                case(3)
+                    d.cfg = setMeta(d.cfg,'RunType','Release_GoPro');
+                case(4)
+                    d.cfg = setMeta(d.cfg,'RunType','Release_Inverted_GoPro');
+                case(5)
+                    d.cfg = setMeta(d.cfg,'RunType','Inverted_GoPro');
+                case(6)
+                    d.cfg = setMeta(d.cfg,'RunType','GoPro');
             end
-            
+              
             % Get Dynamic Pressure
             dynamicPressure = testscript_input('Wind Tunnel Dynamic Pressure (Pa)?\n');                    
             d.cfg = setMeta(d.cfg,'dynamicPressure',dynamicPressure);

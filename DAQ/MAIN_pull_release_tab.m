@@ -8,15 +8,15 @@ addpath('.\gust_vane_7x5'); % Add Gust Vane Code Library
 
 %% Required Input Data
 base_data_dir = '..\data\'; % folder to store data in
-subCase = 2; % datum = 1, step-Release = 2, steady-Release = 3, final datum = 4;
+subCase = 1 ; % datum = 1, step-Release = 2, steady-Release = 3, final datum = 4;
 massCase = 7; % Empty => 1; 1/4 => 2; Half => 3; 3/4 => 4; Full => 5, Qtr_inner =>6
-testAoA = 7.5; % deg
+testAoA = -2.5; % deg
 FlareAngle = 30; % deg
 hingeLocked = 0; % (0/1)
 rho = 1.225;
 testDuration = 10; % sec
-zeroRunNum = 1080;  % NaN for first datum and the run number of first datum for the rest
-jobName = '30DegreeHinge';
+zeroRunNum = NaN;  % NaN for first datum and the run number of first datum for the rest
+jobName = '30DegreeHingeEncoderZero';
 
 % check input
 if ~isnan(zeroRunNum) && subCase == 1
@@ -44,7 +44,7 @@ d.cfg = setMeta(d.cfg,'FlareAngle',FlareAngle);
 % additional test description
 d.cfg = setMeta(d.cfg,'testType',testType);
 % timing
-d.cfg = setMeta(d.cfg,'measurementPauseDuration',3.0, ...
+d.cfg = setMeta(d.cfg,'measurementPauseDuration',1.5, ...
     'preGustPauseDuration',1.0);
 % DAQ rate
 d.daq = setMeta(d.daq,'rate',1700.0); % nearest to 1706.667 Hz(calculated from 1/5.859375e-04)
