@@ -28,6 +28,8 @@ d.cfg.Job = '';
 d.cfg.Comment = '';
 d.cfg.LCO = 0;
 d.cfg.FlareAngle = 0;
+d.cfg.RollAngle = 0;
+d.cfg.AileronAngle = 0;
 
 % gust
 d.gust.amplitudeDeg = 0.0;

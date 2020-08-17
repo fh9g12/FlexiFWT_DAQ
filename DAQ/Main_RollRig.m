@@ -9,13 +9,14 @@ addpath('.\gust_vane_7x5'); % Add Gust Vane Code Library
 %% Required Input Data
 base_data_dir = '..\data\'; % folder to store data in
 subCase = 2; % datum = 1, step-Release = 2, steady-Release = 3, final datum = 4;
-ModelCase = 3; % Fixed => 0; Free => 1; Removed => 2; Left Fixed => 3; Right Fixed => 4
+ModelCase = 1; % Fixed => 0; Free => 1; Removed => 2; Left Fixed => 3; Right Fixed => 4
 testAoA = 0; % deg
+flareAngle = 20;
 hingeLocked = 0; % (0/1)
 rho = 1.225;
 testDuration = 15; % sec
-zeroRunNum = 1279;  % NaN for first datum and the run number of first datum for the rest
-jobName = 'RollingRigv1_45';
+zeroRunNum = 1398;  % NaN for first datum and the run number of first datum for the rest
+jobName = 'RollingRigv2_45';
 
 
 
@@ -35,6 +36,7 @@ d = SetRunTypeMetaData(d,subCase,testDuration);
 
 % WT configuration
 d.cfg = setMeta(d.cfg,'aoa',testAoA);
+d.cfg = setMeta(d.cfg,'FlareAngle',flareAngle);
 % hinge configuration
 d.cfg = setMeta(d.cfg,'locked',hingeLocked);
 d.cfg = setMeta(d.cfg,'ZeroRun',zeroRunNum);
@@ -100,6 +102,9 @@ while(runLoop==1)
     runLoop = testscript_input('Save data? Choose (0 or 1)\n');    
     if(subCase==1 || subCase ==4)
         if runLoop
+            % set roll anlge of Datum
+            rollAngle = testscript_input('Roll Angle (Deg)?\n');                    
+            d.cfg = setMeta(d.cfg,'RollAngle',rollAngle);
             % enter comments
             prompt = 'Enter a Comment\n';
             d.cfg = setMeta(d.cfg,'Comment',input(prompt,'s')); 
@@ -140,6 +145,11 @@ while(runLoop==1)
             rho = 1.225;
             testVelocity = sqrt(dynamicPressure*2/rho); % m/s
             d.cfg = setMeta(d.cfg,'velocity',testVelocity); 
+            
+            % Enter Aileron Angle
+            
+            aa = testscript_input('Aileron Angle (Deg)?\n');                    
+            d.cfg = setMeta(d.cfg,'AileronAngle',aa);
                         
             %% enter comments
             prompt = 'Enter a Comment:\n';
