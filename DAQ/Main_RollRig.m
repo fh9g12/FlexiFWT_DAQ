@@ -12,9 +12,10 @@ subCase = 2; % datum = 1, step-Release = 2, steady-Release = 3, final datum = 4;
 ModelCase = 1; % Fixed => 0; Free => 1; Removed => 2; Left Fixed => 3; Right Fixed => 4
 testAoA = 0; % deg
 flareAngle = 20;
+camberAngle = 10;
 hingeLocked = 0; % (0/1)
 rho = 1.225;
-testDuration = 15; % sec
+testDuration = 30; % sec
 zeroRunNum = 1398;  % NaN for first datum and the run number of first datum for the rest
 jobName = 'RollingRigv2_45';
 
@@ -37,6 +38,7 @@ d = SetRunTypeMetaData(d,subCase,testDuration);
 % WT configuration
 d.cfg = setMeta(d.cfg,'aoa',testAoA);
 d.cfg = setMeta(d.cfg,'FlareAngle',flareAngle);
+d.cfg = setMeta(d.cfg,'CamberAngle',camberAngle);
 % hinge configuration
 d.cfg = setMeta(d.cfg,'locked',hingeLocked);
 d.cfg = setMeta(d.cfg,'ZeroRun',zeroRunNum);

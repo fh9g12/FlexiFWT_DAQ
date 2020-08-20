@@ -30,6 +30,7 @@ d.cfg.LCO = 0;
 d.cfg.FlareAngle = 0;
 d.cfg.RollAngle = 0;
 d.cfg.AileronAngle = 0;
+d.cfg.CamberAngle = 0;
 
 % gust
 d.gust.amplitudeDeg = 0.0;
