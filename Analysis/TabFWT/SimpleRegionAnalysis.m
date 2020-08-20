@@ -26,7 +26,7 @@ for i = 1:length(unique_aoa)
     ind = [RunData.AoA]==unique_aoa(i);
     aoa_data = RunData(ind);
     
-    subplot(1,count,i)
+    subplot(count,1,i)
     hold off
     
     % plot all points
@@ -48,6 +48,7 @@ for i = 1:length(unique_aoa)
     grid minor
     title(sprintf('AoA: %.2f',unique_aoa(i)))
     xlabel('Velocity [m/s]')
+    xlim([18,34])
     ylabel('Tab Deflection [Deg]')
 end
     

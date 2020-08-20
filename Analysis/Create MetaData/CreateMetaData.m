@@ -14,9 +14,9 @@ parfor i = 1:length(localDir)
     if ~isempty(d)
         if isfield(d,'cfg')
         % if here this is a valid .mat file
-        if ~isfield(d.cfg,'runNumber')
+        if ~isfield(d.cfg,'RunNumber')
             % no runNumber field so create one
-            d.cfg.runNumber = i;          
+            d.cfg.RunNumber = i-2000;          
         end
         if ~isfield(d.cfg,'RunType')
             % no RunType field so create one
@@ -38,6 +38,14 @@ parfor i = 1:length(localDir)
             % no LCO field so create one
             d.cfg.LCO = 0;          
         end
+        if ~isfield(d.cfg,'FlareAngle')
+            % no LCO field so create one
+            d.cfg.FlareAngle = 0;          
+        end
+        if ~isfield(d.cfg,'AileronAngle')
+            % no LCO field so create one
+            d.cfg.AileronAngle = 0;          
+        end
 
         if ~isfield(d.cfg,'datetime')
             % no run Number field so create one
@@ -48,12 +56,16 @@ parfor i = 1:length(localDir)
             end  
         end         
         end
+        
+        if ~isfield(d,'tab')
+            d.tab.trimDeg = NaN;
+        end
 
         % save the new file
         % parsave([localDir(i).folder,'\',localDir(i).name],d)
 
         % Populate the Meta Data structure
-        matFiles(i).RunNumber = i;
+        matFiles(i).RunNumber = d.cfg.RunNumber;
         matFiles(i).RunType = d.cfg.RunType;
         matFiles(i).Locked = logical(d.cfg.locked);
         matFiles(i).AoA = d.cfg.aoa;
@@ -67,6 +79,8 @@ parfor i = 1:length(localDir)
         matFiles(i).Datetime = d.cfg.datetime;
         matFiles(i).TabAngle = d.tab.trimDeg;
         matFiles(i).LCO = d.cfg.LCO;
+        matFiles(i).FlareAngle = d.cfg.FlareAngle;
+        matFiles(i).AileronAngle = d.cfg.AileronAngle;
         
         %% get folder and file name
         folders = strsplit(localDir(i).folder,'/');
