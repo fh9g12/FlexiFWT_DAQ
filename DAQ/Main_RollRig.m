@@ -9,14 +9,14 @@ addpath('.\gust_vane_7x5'); % Add Gust Vane Code Library
 %% Required Input Data
 base_data_dir = '..\data\'; % folder to store data in
 subCase = 2; % datum = 1, step-Release = 2, steady-Release = 3, final datum = 4;
-ModelCase = 1; % Fixed => 0; Free => 1; Removed => 2; Left Fixed => 3; Right Fixed => 4
+ModelCase = 2; % Fixed => 0; Free => 1; Removed => 2; Left Fixed => 3; Right Fixed => 4
 testAoA = 0; % deg
-flareAngle = 20;
-camberAngle = 10;
+flareAngle = 0;
+camberAngle = 0;
 hingeLocked = 0; % (0/1)
 rho = 1.225;
-testDuration = 30; % sec
-zeroRunNum = 1398;  % NaN for first datum and the run number of first datum for the rest
+testDuration = 20; % sec
+zeroRunNum = 1398;  % Nan for first datum and the run number of first datum for the rest
 jobName = 'RollingRigv2_45';
 
 
@@ -120,8 +120,8 @@ while(runLoop==1)
         %% Prompts
         if(runLoop)
             % Get Type of Test (step or steady)
-            testType_num = 7;
-            while testType_num>6
+            testType_num = 8;
+            while testType_num>7
                 testType_num = testscript_input('Test Type? (0-Release 1-Steady 2-Release_Inverted 3-Release_GoPro 4-Release_Inverted_GoPro 5-Inverted_GoPro 6-GoPro):\n');
             end                
             switch testType_num
@@ -139,6 +139,8 @@ while(runLoop==1)
                     d.cfg = setMeta(d.cfg,'RunType','Inverted_GoPro');
                 case(6)
                     d.cfg = setMeta(d.cfg,'RunType','GoPro');
+                case(7)
+                    d.cfg = setMeta(d.cfg,'RunType','HandRelease');
             end
               
             % Get Dynamic Pressure
