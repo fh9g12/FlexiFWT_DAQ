@@ -46,13 +46,25 @@ parfor i = 1:length(localDir)
             % no LCO field so create one
             d.cfg.AileronAngle = 0;          
         end
+        if ~isfield(d.cfg,'CamberAngle')
+            % no LCO field so create one
+            d.cfg.CamberAngle = 0;          
+        end
+        if ~isfield(d.cfg,'RollAngle')
+            % no LCO field so create one
+            d.cfg.RollAngle = 0;          
+        end
 
         if ~isfield(d.cfg,'datetime')
             % no run Number field so create one
             folders = strsplit(localDir(i).folder,'/');
             index = find(contains(folders,'2020'));
             if ~isempty(index)
-              d.cfg.datetime = [folders{index},' 00:00:00'];
+                try
+                    d.cfg.datetime = datetime([folders{index},' 00:00:00']);
+                catch
+                    d.cfg.datetime = datetime([folders{index}],'InputFormat','ddMMMyyyy');
+                end
             end  
         end         
         end
@@ -80,6 +92,8 @@ parfor i = 1:length(localDir)
         matFiles(i).TabAngle = d.tab.trimDeg;
         matFiles(i).LCO = d.cfg.LCO;
         matFiles(i).FlareAngle = d.cfg.FlareAngle;
+        matFiles(i).CamberAngle = d.cfg.CamberAngle;
+        matFiles(i).RollAngle = d.cfg.RollAngle;
         matFiles(i).AileronAngle = d.cfg.AileronAngle;
         
         %% get folder and file name

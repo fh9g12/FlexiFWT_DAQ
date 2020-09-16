@@ -7,16 +7,7 @@ addpath('../CommonLibrary/ERA')
 % set global parameters
 localDir = '../../data/';  % the directory containing the 'data' folder
 
-% Open the Meta-Data file
-load([localDir,'../MetaData.mat']);     % the Metadata filepath
-
-indicies = true([1,length(MetaData)]);
-indicies = indicies & contains(string({MetaData.Job}),'RollingRigv2');
-%indicies = indicies & ~contains(string({MetaData.Folder}),'29-Jul-2020'); % bad day of testing
-%indicies = indicies & [MetaData.RunNumber]~=1073; % weird speed
-indicies = indicies & (strcmp(string({MetaData.RunType}),'Release')|strcmp(string({MetaData.RunType}),'Steady'));
-
-RunData = MetaData(indicies);
+RunData = GetV2Runs(localDir);
 
 Models = unique(string({RunData.Job}));
 
@@ -24,7 +15,7 @@ figure(1)
 clf
 for i =1:length(RunData)
     subplot(4,4,i)
-    enc_deg = LoadEncoderDatav2(RunData(i).RunNumber);
+    enc_deg = LoadEncoderData(RunData(i).RunNumber);
     enc_deg = enc_deg(end-1700*5:end);
     enc_deg = movmean(enc_deg,32);
     v_enc_deg = diff(enc_deg)*1700;
@@ -50,3 +41,5 @@ for i =1:length(RunData)
     xlabel('Roll Angle [Deg]')
     ylabel('Variation from mean Roll rate [Deg/s]')
 end
+
+
