@@ -9,6 +9,8 @@ if Time >= VideoFileReader.Duration
 end
 VideoFileReader.CurrentTime = Time;
 frame = readFrame(VideoFileReader);
-frame = imcrop(frame,ROI);
+if exist('ROI','var')
+    frame = imcrop(frame,ROI);
+end
 end
 

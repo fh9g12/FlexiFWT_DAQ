@@ -1,4 +1,4 @@
-function [d] = LoadRunNumber(runNumber)
+function [d] = LoadRunNumber(runNumber,localDir)
 %LOADRUNNUMBER Summary of this function goes here
 %   Detailed explanation goes here
 
@@ -6,7 +6,9 @@ function [d] = LoadRunNumber(runNumber)
 load('../../MetaData.mat')
 
 %runs = length(MetaData);
-localDir = '../../data/';
+if ~exist('localDir','var')
+    localDir = '../../data/';
+end
 
 
 ind = [MetaData.RunNumber] == runNumber;

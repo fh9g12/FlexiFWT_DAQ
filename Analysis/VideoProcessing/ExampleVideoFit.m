@@ -1,11 +1,11 @@
-vidFileReader = VideoReader('FixedWIngCentre.mp4');
+vidFileReader = VideoReader('/Volumes/Seagate Expansi/PhD Files/Data/WT data/VideoData/20-Aug-2020/GX010124.MP4');
 
 depVideoPlayer = vision.DeployableVideoPlayer;
 
-ROI = [689.5 524.5 498 370];
+ROI = [700,620,500,400];
 %centre = [236,186]; %position of centre of rotation in ROI
 centre = [243,196]; %position of centre of rotation in ROI
-centre = [262,217]; %position of centre of rotation in ROI
+centre = [252,160]; %position of centre of rotation in ROI
 lengths = [112,45]; %length of main wing semi span and FWT length in pixels
 
 disp('calulating mean frame')
