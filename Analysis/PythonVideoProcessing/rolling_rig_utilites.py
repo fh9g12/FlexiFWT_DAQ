@@ -35,20 +35,22 @@ def overlay_rolling_rig(img,angles,centre,lengths,color=(0,0,0),width=5):
 def get_wing_diff(img,bg,min_threshold=30):
     img = cv2.GaussianBlur(img,(3,3),0)
     img = cv2.subtract(img,bg)
-    # img = np.abs(img[:,:,1]-img[:,:,2]).astype('uint8')
     img[:,:,0] = 0
     img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
     ret,img = cv2.threshold(img,min_threshold,255,cv2.THRESH_BINARY)
     return img
 
 def get_centre_point(video_capture,bg,centre,lengths,roi=None,min_threshold=30):
+    total_frames = video_capture.get(cv2.CAP_PROP_FRAME_COUNT)
+    fps = video_capture.get(cv2.CAP_PROP_FPS)
+    duration = total_frames/fps    
     video_capture.set(cv2.CAP_PROP_POS_FRAMES, 0)
+
     cx,cy = centre
     len_main, len_fwt = lengths
-    fail = 0
     accumulator = None
     np.seterr(divide='ignore')
-    while video_capture.isOpened():
+    for i in range(total_frames):
         ret, img = video_capture.read()
         if ret:
             fail = 0
@@ -70,10 +72,6 @@ def get_centre_point(video_capture,bg,centre,lengths,roi=None,min_threshold=30):
                 tmp = np.zeros_like(img).astype('float')
                 tmp = cv2.line(tmp,(semi_width*2-1,righty),(0,lefty),(0.01),2)
                 accumulator += tmp
-        else:
-            fail += 1
-            if fail>10:
-                break
     accumulator = (accumulator==np.max(accumulator))*255
     return np.mean(cv2.findNonZero(accumulator),0)[0]+np.array([cx-semi_width,cy-semi_width])
 
@@ -95,9 +93,8 @@ def get_wing_angles(frame,bg,centre,lengths,roi,threshold = 30):
     red_vector = np.array([r_cX-cx,r_cY-cy])
     red_vector /= np.sqrt(np.sum(red_vector**2))
 
-    # calculate angles
+    # -------------------------- Calculate the roll angle -------------------------------
     frame = get_wing_diff(crop_image(frame,roi),bg,min_threshold = threshold)
-
     # select region excluding wingtips and central support to find the roll angle of the inner wing
     roll_frame = frame.copy()
     semi_width = int(len_main*0.75)
@@ -109,7 +106,9 @@ def get_wing_angles(frame,bg,centre,lengths,roi,threshold = 30):
 
     # fit a line to all the white pixels to find the roll angle
     points = cv2.findNonZero(roll_frame)
-    [vx,vy,x,y] = cv2.fitLine(points, cv2.DIST_L2,0,0.01,0.01)
+    if len(points)<=3:
+        return tuple([np.nan]*3)
+    [vx,vy,_,_] = cv2.fitLine(points, cv2.DIST_L2,0,0.01,0.01)
     roll = -np.arctan2(vy,vx)[0]
 
     # the fitted line doesnt know about direction so need to utilise the calculated roll angle
@@ -152,13 +151,19 @@ def get_wing_angles(frame,bg,centre,lengths,roi,threshold = 30):
     # get the right tip roi
     right_frame = fwt_frame[int(semi_span-len_fwt):int(semi_span+len_fwt),-int(len_fwt*2):]
     points = cv2.findNonZero(right_frame)
-    [vx,vy,x,y] = cv2.fitLine(points, cv2.DIST_L2,0,0.01,0.01)
-    right_angle = -np.arctan(vy/vx)[0]
+    if len(points)>3:
+        [vx,vy,x,y] = cv2.fitLine(points, cv2.DIST_L2,0,0.01,0.01)
+        right_angle = -np.arctan(vy/vx)[0]
+    else:
+        right_angle = np.nan
 
     # get the left tip roi
     left_frame = fwt_frame[int(semi_span-len_fwt):int(semi_span+len_fwt),:int(len_fwt*2)]
     points = cv2.findNonZero(left_frame)
-    [vx,vy,x,y] = cv2.fitLine(points, cv2.DIST_L2,0,0.01,0.01)
-    left_angle = np.arctan(vy/vx)[0]
+    if len(points)>3:
+        [vx,vy,x,y] = cv2.fitLine(points, cv2.DIST_L2,0,0.01,0.01)
+        left_angle = np.arctan(vy/vx)[0]
+    else:
+        left_angle = np.nan
 
     return tuple(np.rad2deg([roll,left_angle,right_angle]))
