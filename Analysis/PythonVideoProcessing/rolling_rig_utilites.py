@@ -84,7 +84,7 @@ def get_mean_angle(frame):
         return np.arctan(vy/vx)[0]
 
 
-def get_wing_angles(frame,bg,centre,lengths,roi,threshold = 30):
+def get_wing_angles(frame,bg,centre,lengths,roi,threshold = 30,pie_angle = 30):
     len_main, len_fwt = lengths
     cx,cy = centre
 
@@ -99,7 +99,7 @@ def get_wing_angles(frame,bg,centre,lengths,roi,threshold = 30):
     r_cX = int(M['m10']/M['m00'])
 
     # get vector from wing centre to 'red centre'
-    red_vector = np.array([r_cX-cx,r_cY-cy])
+    red_vector = np.array([r_cX-cx,r_cY-cy]).astype('float')
     red_vector /= np.sqrt(np.sum(red_vector**2))
 
     # -------------------------- Calculate the roll angle -------------------------------
@@ -119,8 +119,8 @@ def get_wing_angles(frame,bg,centre,lengths,roi,threshold = 30):
         return tuple([np.nan]*3)
 
     # occlude all pixel not with 30 degrees of the initial roll angle and try again
-    cv2.ellipse(roll_frame, (int(semi_width),int(semi_width)), (int(semi_width),int(semi_width)), -np.rad2deg(roll), 30, 150, (0,0,0), -1)
-    cv2.ellipse(roll_frame, (int(semi_width),int(semi_width)), (int(semi_width),int(semi_width)), -np.rad2deg(roll), 210, 330, (0,0,0), -1)
+    cv2.ellipse(roll_frame, (int(semi_width),int(semi_width)), (int(semi_width),int(semi_width)), -np.rad2deg(roll), pie_angle, 180-pie_angle, (0,0,0), -1)
+    cv2.ellipse(roll_frame, (int(semi_width),int(semi_width)), (int(semi_width),int(semi_width)), -np.rad2deg(roll), 180+pie_angle, 260-pie_angle, (0,0,0), -1)
 
     roll = -get_mean_angle(roll_frame)
     if np.isnan(roll):

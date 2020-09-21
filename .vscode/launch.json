@@ -10,7 +10,7 @@
             "request": "launch",
             "program": "${file}",
             "console": "integratedTerminal",
-            "args": ["-v","/Volumes/Seagate Expansi/PhD Files/Data/WT data/VideoData/20-Aug-2020/GX010129.MP4","-r","700","360","540","530","-t","35","-i","120","-d","False"]
+            "args": ["-d","False","-v","/Volumes/Seagate Expansi/PhD Files/Data/WT data/VideoData/20-Aug-2020/GX010129.MP4","-r","700","360","540","530","-t","35","-i","120"]
         }
     ]
 }

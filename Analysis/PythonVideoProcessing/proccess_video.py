@@ -11,7 +11,7 @@ from scipy.io import savemat
 from image_ultilites import crop_image,getMeanFrame,selectROIResized
 from rolling_rig_utilites import get_centre_point,get_wing_angles,get_wing_diff,overlay_rolling_rig
 
-def process_video_file(video_file,save_file = "",inner_span = 120 ,fwt_span = 44 ,roi = None , threshold = 35 , display_video=False):
+def process_video_file(video_file,save_file = "",inner_span = 120 ,fwt_span = 44 ,roi = None , threshold = 35 , display_video=False, background_image = None):
     # if save_file blank make the name the same as the video with a .mat extension
     if not save_file:
         pre,_ = os.path.splitext(video_file)
@@ -28,9 +28,17 @@ def process_video_file(video_file,save_file = "",inner_span = 120 ,fwt_span = 44
         ROI = tuple(roi)
 
     # Create Background Image
-    print(filename + " - Generating Mean Image...")
-    bg = getMeanFrame(cap,ROI,-5)
-    bg = cv2.GaussianBlur(bg,(3,3),0)
+    if background_image is None:
+        print(filename + " - Generating Mean Image...")
+        bg = getMeanFrame(cap,ROI,-5)
+        bg = cv2.GaussianBlur(bg,(3,3),0)
+    elif isinstance(background_image, str):
+        bg = cv2.imread(background_image,cv2.IMREAD_COLOR)
+        if bg is None:
+            raise ValueError('background image path is incorrect')
+    elif type(background_image).__module__ == np.__name__:
+        bg = crop_image(background_image,ROI)
+
 
     # find first approximation for centre
     print(filename + " - Finding the Centre Point...")
@@ -84,6 +92,15 @@ def process_video_file(video_file,save_file = "",inner_span = 120 ,fwt_span = 44
     cap.release()
     cv2.destroyAllWindows()
 
+def str2bool(v):
+    if isinstance(v, bool):
+       return v
+    if v.lower() in ('yes', 'true', 't', 'y', '1'):
+        return True
+    elif v.lower() in ('no', 'false', 'f', 'n', '0'):
+        return False
+    else:
+        raise argparse.ArgumentTypeError('Boolean value expected.')
 
 if __name__ == "__main__":
     ap = argparse.ArgumentParser()
@@ -93,7 +110,7 @@ if __name__ == "__main__":
     ap.add_argument("-f", "--fwt_span", type=int, default=40, help="Semi-span of the FWT")
     ap.add_argument("-r","--roi", nargs="+", type=int)
     ap.add_argument("-t","--threshold", type=int, default=30, help="Minimium threholds value for binarising")
-    ap.add_argument("-d","--display_video", type=bool, default=False, help="Show video")
+    ap.add_argument("-d","--display_video", type=str2bool, default=False, help="Show video")
     args = vars(ap.parse_args())
 
     process_video_file(args['video'],args['save_file'],args['inner_span'],args['fwt_span'],args['roi'] , args['threshold'] , args['display_video'])
