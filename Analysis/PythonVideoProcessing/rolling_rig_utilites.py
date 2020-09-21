@@ -50,10 +50,9 @@ def get_centre_point(video_capture,bg,centre,lengths,roi=None,min_threshold=30):
     len_main, len_fwt = lengths
     accumulator = None
     np.seterr(divide='ignore')
-    for i in range(total_frames):
+    for i in range(int(total_frames)):
         ret, img = video_capture.read()
         if ret:
-            fail = 0
             img = get_wing_diff(crop_image(img,roi),bg,min_threshold = min_threshold)
             semi_width = int(len_main*0.75)
             img = crop_image(img,(int(cx-semi_width),int(cy-semi_width),
@@ -74,6 +73,16 @@ def get_centre_point(video_capture,bg,centre,lengths,roi=None,min_threshold=30):
                 accumulator += tmp
     accumulator = (accumulator==np.max(accumulator))*255
     return np.mean(cv2.findNonZero(accumulator),0)[0]+np.array([cx-semi_width,cy-semi_width])
+
+
+def get_mean_angle(frame):
+    points = cv2.findNonZero(frame)
+    if points is None or len(points) < 3:
+        return np.nan
+    else:
+        [vx,vy,_,_] = cv2.fitLine(points, cv2.DIST_L2,0,0.01,0.01)
+        return np.arctan(vy/vx)[0]
+
 
 def get_wing_angles(frame,bg,centre,lengths,roi,threshold = 30):
     len_main, len_fwt = lengths
@@ -104,12 +113,18 @@ def get_wing_angles(frame,bg,centre,lengths,roi,threshold = 30):
     roll_frame = cv2.circle(roll_frame,(int(semi_width),int(semi_width)),
                                         int(len_main*0.2),(0,0,0),-1)
 
-    # fit a line to all the white pixels to find the roll angle
-    points = cv2.findNonZero(roll_frame)
-    if len(points)<=3:
+    # fit a line to all the white pixels to find initial roll angle
+    roll = get_mean_angle(roll_frame)
+    if np.isnan(roll):
         return tuple([np.nan]*3)
-    [vx,vy,_,_] = cv2.fitLine(points, cv2.DIST_L2,0,0.01,0.01)
-    roll = -np.arctan2(vy,vx)[0]
+
+    # occlude all pixel not with 30 degrees of the initial roll angle and try again
+    cv2.ellipse(roll_frame, (int(semi_width),int(semi_width)), (int(semi_width),int(semi_width)), -np.rad2deg(roll), 30, 150, (0,0,0), -1)
+    cv2.ellipse(roll_frame, (int(semi_width),int(semi_width)), (int(semi_width),int(semi_width)), -np.rad2deg(roll), 210, 330, (0,0,0), -1)
+
+    roll = -get_mean_angle(roll_frame)
+    if np.isnan(roll):
+        return tuple([np.nan]*3)
 
     # the fitted line doesnt know about direction so need to utilise the calculated roll angle
     # and the location of the red pixels (i.e the left side of the wing) to find which quadrent
@@ -150,20 +165,10 @@ def get_wing_angles(frame,bg,centre,lengths,roi,threshold = 30):
 
     # get the right tip roi
     right_frame = fwt_frame[int(semi_span-len_fwt):int(semi_span+len_fwt),-int(len_fwt*2):]
-    points = cv2.findNonZero(right_frame)
-    if len(points)>3:
-        [vx,vy,x,y] = cv2.fitLine(points, cv2.DIST_L2,0,0.01,0.01)
-        right_angle = -np.arctan(vy/vx)[0]
-    else:
-        right_angle = np.nan
+    right_angle = -get_mean_angle(right_frame)
 
     # get the left tip roi
     left_frame = fwt_frame[int(semi_span-len_fwt):int(semi_span+len_fwt),:int(len_fwt*2)]
-    points = cv2.findNonZero(left_frame)
-    if len(points)>3:
-        [vx,vy,x,y] = cv2.fitLine(points, cv2.DIST_L2,0,0.01,0.01)
-        left_angle = np.arctan(vy/vx)[0]
-    else:
-        left_angle = np.nan
+    left_angle = get_mean_angle(left_frame)
 
     return tuple(np.rad2deg([roll,left_angle,right_angle]))
