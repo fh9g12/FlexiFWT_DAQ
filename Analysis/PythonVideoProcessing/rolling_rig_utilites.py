@@ -61,16 +61,16 @@ def get_centre_point(video_capture,bg,centre,lengths,roi=None,min_threshold=30):
             img = cv2.circle(img,(int(semi_width),int(semi_width)),
                                                 int(len_main*0.2),(0,0,0),-1)
             points = cv2.findNonZero(img)
-
-            [vx,vy,x,y] = cv2.fitLine(points, cv2.DIST_L2,0,0.01,0.01)
-            lefty = int((-x*vy/vx) + y)
-            righty = int(((semi_width*2-x)*vy/vx)+y)
-            if accumulator is None:
-                accumulator = np.zeros_like(img).astype('float')
-            else:
-                tmp = np.zeros_like(img).astype('float')
-                tmp = cv2.line(tmp,(semi_width*2-1,righty),(0,lefty),(0.01),2)
-                accumulator += tmp
+            if points is not None and len(points)>5:
+                [vx,vy,x,y] = cv2.fitLine(points, cv2.DIST_L2,0,0.01,0.01)
+                lefty = int((-x*vy/vx) + y)
+                righty = int(((semi_width*2-x)*vy/vx)+y)
+                if accumulator is None:
+                    accumulator = np.zeros_like(img).astype('float')
+                else:
+                    tmp = np.zeros_like(img).astype('float')
+                    tmp = cv2.line(tmp,(semi_width*2-1,righty),(0,lefty),(0.01),2)
+                    accumulator += tmp
     accumulator = (accumulator==np.max(accumulator))*255
     return np.mean(cv2.findNonZero(accumulator),0)[0]+np.array([cx-semi_width,cy-semi_width])
 

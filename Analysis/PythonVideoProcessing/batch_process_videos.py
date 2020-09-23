@@ -3,7 +3,7 @@ from proccess_video import process_video_file
 import ray
 
 
-folder = "/Volumes/Seagate Expansi/PhD Files/Data/WT data/VideoData/21-Aug-2020/"
+folder = "/Volumes/Seagate Expansi/PhD Files/Data/WT data/VideoData/20-Aug-2020/"
 
 files = glob.glob(folder+'*.MP4', recursive=True)
 
@@ -19,7 +19,8 @@ def process_file(name):
 ray.init()
 
 
-futures = [process_file.remote(i) for i in files]
+#futures = [process_file.remote(i) for i in files]
+futures = [process_file.remote("/Volumes/Seagate Expansi/PhD Files/Data/WT data/VideoData/20-Aug-2020/GX010173.MP4")]
 print(ray.get(futures))
 
 
