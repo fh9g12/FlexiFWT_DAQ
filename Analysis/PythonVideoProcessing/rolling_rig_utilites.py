@@ -94,21 +94,22 @@ def get_wing_angles(frame,bg,centre,lengths,roi,threshold = 30,pie_angle = 30):
     img = cv2.subtract(crop_image(frame,roi),bg)
     r_img = cv2.subtract(img[:,:,2] , img[:,:,1])
     r_img = np.where(r_img<20,0,r_img)
-    M = cv2.moments(r_img)
+
+    semi_width = int(len_main*0.75)
+    inner_roi = tuple(int(i) for i in (cx-semi_width,cy-semi_width,semi_width*2,semi_width*2))
+    M = cv2.moments(crop_image(r_img,inner_roi))
     r_cY = int(M["m01"] / M["m00"])
     r_cX = int(M['m10']/M['m00'])
 
     # get vector from wing centre to 'red centre'
-    red_vector = np.array([r_cX-cx,r_cY-cy]).astype('float')
+    red_vector = np.array([r_cX-semi_width,r_cY-semi_width]).astype('float')
     red_vector /= np.sqrt(np.sum(red_vector**2))
 
     # -------------------------- Calculate the roll angle -------------------------------
     frame = get_wing_diff(crop_image(frame,roi),bg,min_threshold = threshold)
     # select region excluding wingtips and central support to find the roll angle of the inner wing
     roll_frame = frame.copy()
-    semi_width = int(len_main*0.75)
-    roll_frame = crop_image(roll_frame,(int(cx-semi_width),int(cy-semi_width),
-    int(semi_width*2),int(semi_width*2)))
+    roll_frame = crop_image(roll_frame,inner_roi)
 
     roll_frame = cv2.circle(roll_frame,(int(semi_width),int(semi_width)),
                                         int(len_main*0.2),(0,0,0),-1)

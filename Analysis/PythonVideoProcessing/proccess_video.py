@@ -112,6 +112,5 @@ if __name__ == "__main__":
     ap.add_argument("-t","--threshold", type=int, default=30, help="Minimium threholds value for binarising")
     ap.add_argument("-d","--display_video", type=str2bool, default=False, help="Show video")
     args = vars(ap.parse_args())
-
     process_video_file(args['video'],args['save_file'],args['inner_span'],args['fwt_span'],args['roi'] , args['threshold'] , args['display_video'])
    

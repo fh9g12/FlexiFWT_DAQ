@@ -2,7 +2,7 @@
 
 matFiles = struct([]);
 
-localDir = dir('../../data/**/*.mat');
+localDir = dir('/Volumes/Seagate Expansi/PhD Files/Data/WT data/data/**/*.mat');
 
 parfor i = 1:length(localDir)
     %clearvars -except localDir matFiles RunNumber i
@@ -118,6 +118,22 @@ parfor i = 1:length(localDir)
 end
 
 MetaData = matFiles;
+
+
+%link video Data
+load('VideoMetaData.mat','VideoMetaData')
+for i = 1:length(VideoMetaData)
+    rn = VideoMetaData(i).RunNumber;
+    if ~isnan(rn)
+        meta_i = find([MetaData.RunNumber]==rn,1);
+        MetaData(meta_i).GoProNumber = VideoMetaData(i).GoProNumber;
+        MetaData(meta_i).VideoComment = VideoMetaData(i).Comment;
+        MetaData(meta_i).VideoFilename = VideoMetaData(i).Filename;
+        MetaData(meta_i).VideoFolder = VideoMetaData(i).Folder;
+        MetaData(meta_i).VideoDatetime = VideoMetaData(i).Datetime;
+    end
+end
+
 save('MetaData.mat','MetaData')
 
 

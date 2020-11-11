@@ -1,6 +1,6 @@
 function [v] = Correct_video(x,a,b,c,d)
-%CORRECT_VIDEO Summary of this function goes here
-%   Detailed explanation goes here
+%CORRECT_VIDEO applies a correction to the roll angles extrract from video
+%data
 if ~exist('a','var')
    a = 1.136;
 end

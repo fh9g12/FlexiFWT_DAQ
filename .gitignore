@@ -32,6 +32,7 @@ octave-workspace
 
 # Dont want data files
 *.mat
+*.csv
 
 # Dont want pictures
 *.jpg

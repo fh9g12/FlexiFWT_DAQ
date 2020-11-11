@@ -2,7 +2,7 @@ function [angles,centre,t] = LoadVideoData(file,cutoff)
 %LOADVIDEODATA Summary of this function goes here
 %   Detailed explanation goes here
 if ~exist('cutoff','var')
-   cutoff = 10; 
+   cutoff = 20; 
 end
 %load the data
 vidData = load(file);
@@ -33,7 +33,7 @@ shape = [1 1 0 0];
 frex = [0, cutoff, cutoff+5,fs/2]/(fs/2);
 filtkern = firls(order,frex,shape);
 
-angles = filtfilt(filtkern,1,[roll',leftFold',rightFold']);
+angles = filtfilt(filtkern,1,[roll',rightFold',leftFold']);
 
 % roll = filtfilt(filtkern,1,roll);
 % leftFold = filtfilt(filtkern,1,leftFold);
