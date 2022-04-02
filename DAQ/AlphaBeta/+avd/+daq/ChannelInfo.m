@@ -3,21 +3,23 @@ classdef ChannelInfo
     %   Detailed explanation goes here
     properties
         DeviceID
-        Idx;
+        ChannelID;
         MeasurementType;
         Name;
-        Sensitivity;
+        Props;
     end
     
     methods
-        function obj = ChannelInfo(DeviceID,Idx,MeasurementType,Name,Sensitivity)
+        function obj = ChannelInfo(DeviceID,Idx,MeasurementType,Name,Props)
             %CHANNELINFO Construct an instance of this class
             %   Detailed explanation goes here
             obj.DeviceID = DeviceID;
-            obj.Idx = Idx;
+            obj.ChannelID = Idx;
             obj.MeasurementType = MeasurementType;
             obj.Name = Name;
-            obj.Sensitivity = Sensitivity;
+            if exist('Props','var')
+                obj.Props = Props;
+            end
         end
     end
 end

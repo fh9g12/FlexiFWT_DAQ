@@ -1,20 +1,28 @@
-classdef AlphaBeta
+classdef AlphaBeta < daq.interfaces.DataAcquisition
     %ALPHABETA Summary of this class goes here
     %   Detailed explanation goes here
     
     properties
-        d = daq.interfaces.DataAcquisition.empty; 
-        SampleRate = 1000;
+        BackgroundData = struct();
+        BackgroundDataReady = false;
     end
     
     methods
         function obj = AlphaBeta(sampleRate)
             %ALPHABETA Construct an instance of this class
             %   Detailed explanation goes here
-            obj.SampleRate = sampleRate;
-            obj.d = obj.initDAQ();
-            disp(obj.d);
+            daqreset;
+            obj = obj@daq.interfaces.DataAcquisition('ni');
+            obj.addChannels();
+            obj.Rate = sampleRate;
+            disp(obj.Channels);
         end
+%         function delete(obj)
+%             if obj.Running
+%                 obj.stop();
+%             end
+%             obj.flush();
+%         end
     end
 end
 
