@@ -6,12 +6,12 @@ addpath('..')
 addpath('VideoCalibration/')
 
 % directory with data and VideoData folders in
-dataDir = '/Volumes/Seagate Expansi/PhD Files/Data/WT data/';
+dataDir = 'D:\PhD Files\Data\WT data';
 
-load([dataDir,'MetaData.mat'],'MetaData')
+load(fullfile(dataDir,'MetaData_old.mat'),'MetaData')
 
 % pick only fixed rolling rig jobs
-RunData = GetV2Runs('/Volumes/Seagate Expansi/PhD Files/Data/WT data/');
+RunData = GetV2Runs(dataDir);
 
 f = waitbar(0,'Please wait...');
 for i=1:length(RunData)
@@ -21,7 +21,7 @@ for i=1:length(RunData)
     % load video data
     if ~isempty(RunData(i).GoProNumber)
         ss = strsplit(RunData(i).VideoFilename,'.');
-        [angles_vid,centre,t_vid] = LoadVideoData([dataDir,'VideoData/',RunData(i).VideoFolder,ss{1},'.mat']);
+        [angles_vid,centre,t_vid] = LoadVideoData(fullfile(dataDir,'VideoData',RunData(i).VideoFolder,[ss{1},'.mat']));
         % align data
         [t,angles,angles_vid] = align_encoder_video_data(t_vid,angles_vid,t,angles);
         angles = [angles,angles_vid];

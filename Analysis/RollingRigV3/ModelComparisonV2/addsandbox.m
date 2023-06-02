@@ -2,6 +2,7 @@ function addsandbox()
 restoredefaultpath;
 addpath('../../CommonLibrary')
 addpath('../')
-addpath(genpath('/Users/fintan/Git/fhUtilities/tbx/fhUtilities'))
+addpath('C:\git\FARG_MATLAB_Utilities\tbx\FARG_MATLAB_Utilities\personal')
+addpath('C:\git\FARG_MATLAB_Utilities\tbx\FARG_MATLAB_Utilities')
 end
 

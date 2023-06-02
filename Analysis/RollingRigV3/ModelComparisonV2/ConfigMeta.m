@@ -50,16 +50,16 @@ classdef ConfigMeta
     end
     methods(Static)
         function obj = CreateMeta(config)
-            colors = linspecer(12,'qualitative');
+%             colors = fh.colors.linspecer(12,'qualitative');
             switch config
                 case 'removed'
-                    obj = ConfigMeta('RollingRig_Removed',[],0,colors(3,:),@(x,y)1,'Removed Case','-');
+                    obj = ConfigMeta('RollingRig_Removed',[],0,[0 1 0],@(x,y)1,'Removed Case','-');
                 case 'fixed'
-                    obj = ConfigMeta('RollingRig_Fixed',[],0,colors(1,:),@(x,y)1,'Fixed Case','-');
+                    obj = ConfigMeta('RollingRig_Fixed',[],0,[1 0 0],@(x,y)1,'Fixed Case','-');
                 case 'free10'
-                    obj = ConfigMeta('RollingRig_Free',10,0, colors(4,:),@(x,y)1,'10 Degrees Flare','-');
+                    obj = ConfigMeta('RollingRig_Free',10,0, [1 1 0],@(x,y)1,'10 Degrees Flare','-');
                 case 'free30'
-                    obj = ConfigMeta('RollingRig_Free',30,0, colors(6,:),@(x,y)1,'30 Degrees Flare','-');
+                    obj = ConfigMeta('RollingRig_Free',30,0, [0 1 1],@(x,y)1,'30 Degrees Flare','-');
             end
         end
     end

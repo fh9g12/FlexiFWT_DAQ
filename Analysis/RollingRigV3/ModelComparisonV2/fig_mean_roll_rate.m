@@ -4,8 +4,8 @@ addsandbox
 %% pre-amble
 
 % load SimData
-SimData = load_SimData(["FixedData.csv","FreeData.csv"]);
-SimData = SimData(strcmp(string({SimData.LiftDist}),'Roll60'));
+% SimData = load_SimData(["FixedData.csv","FreeData.csv"]);
+% SimData = SimData(strcmp(string({SimData.LiftDist}),'Roll60'));
 
 % Load WT RunData
 load('../RunData_500.mat')
@@ -22,7 +22,7 @@ for i = 1:length(runs)
 end
 
 % Combine Data sources
-RunData = concat_structs(RunData,SimData);
+% RunData = concat_structs(RunData,SimData);
 
 % create V channel
 for i = 1:length(RunData)
@@ -39,9 +39,9 @@ configs_tmp = [...
     ConfigMeta.CreateMeta('free30').set_T(0.12),...
     ];
 configs ={};
-for i = 1:length(configs_tmp)
-    configs{end+1} = configs_tmp(i).set_enviroment('sim','--');
-end
+% for i = 1:length(configs_tmp)
+%     configs{end+1} = configs_tmp(i).set_enviroment('sim','--');
+% end
 for i = 1:length(configs_tmp)
     configs{end+1} = configs_tmp(i).set_enviroment('WT','-');
 end
@@ -59,7 +59,7 @@ for i = 1:length(AileronAngles)
         f = configs{j}.create_filter();  
         f{end+1} = {'AileronAngle',[AileronAngles(i)]};
         f{end+1} = {'V',[15,20,25,30]};
-        filtData = filter_struct(RunData,f);
+        filtData = farg.struct.filter(RunData,f);
 
         % plot the data
         [h,x,y] = PlotMeanData(filtData,'V','getabs',true);
@@ -102,7 +102,7 @@ for i = 1:length(AileronAngles)
         f = configs{j}.create_filter();  
         f{end+1} = {'AileronAngle',[AileronAngles(i)]};
         f{end+1} = {'V',[15,20,25,30]};
-        filtData = filter_struct(RunData,f);
+        filtData = farg.struct.filter(RunData,f);
         % plot the data
         if j == 1
             [xd,yd,~] = GetMeanData(filtData,'V','getabs',true);
@@ -127,7 +127,7 @@ end
 
 clear RunData
 filename = '/Users/fintan/Desktop/Figures/mean_roll_rate.png';
-exportgraphics(f_handle,filename,'BackgroundColor','white')
+% exportgraphics(f_handle,filename,'BackgroundColor','white')
 
 function [h,unique_x,rr] = PlotMeanData(RunData,varargin)
     p = inputParser;
